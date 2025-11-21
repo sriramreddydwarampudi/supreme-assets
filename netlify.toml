@@ -1,0 +1,31 @@
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers configuration
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Static assets caching
+[[headers]]
+  for = "/_expo/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Build settings
+[build]
+  command = "npx expo export --platform web && node scripts/copy-redirects.js"
+  publish = "dist"
+  functions = "netlify/functions"
+
+# Environment settings
+[build.environment]
+  NODE_VERSION = "18"

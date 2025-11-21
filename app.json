@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Supreme Dental",
+    "slug": "supreme-dental",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "supremedental",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Supreme Dental to scan QR codes."
+        }
+      ]
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.supreme.dental"
+    },
+    "android": {
+      "package": "com.supreme.dental",
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "728835f9-2aa3-4f5b-bb03-7d8a687de745"
+      }
+    }
+  }
+}

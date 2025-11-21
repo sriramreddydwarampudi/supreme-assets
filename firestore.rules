@@ -1,0 +1,58 @@
+﻿
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      // More robust admin check - returns false if user doc doesn't exist rather than erroring
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Any authenticated user can read their own document
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Any authenticated user can create their own document (for auto-creation on first login)
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Users can update their own document
+      allow update: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Only admins can delete
+      allow delete: if isAdmin();
+      
+      // Admins can read, update any user document
+      allow read, update: if isAdmin();
+    }
+    
+    // Customers collection - authenticated can read, only admins can write
+    match /customers/{customerId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Companies collection - authenticated can read, only admins can write
+    match /companies/{companyId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Products collection - authenticated can read, only admins can write
+    match /products/{productId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Customer Products subcollection - user can access their own, admins can access all
+    match /users/{userId}/products/{productId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin() || (isAuthenticated() && request.auth.uid == userId);
+    }
+  }
+}
